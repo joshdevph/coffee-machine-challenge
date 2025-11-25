@@ -1,0 +1,117 @@
+{
+  "info": {
+    "_postman_id": "5a21e48c-5c3a-4f17-bb6b-7be3b8c2e5d8",
+    "name": "Coffee Machine API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/status",
+          "host": ["{{base_url}}"],
+          "path": ["status"]
+        }
+      }
+    },
+    {
+      "name": "Brew Espresso",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/coffee/espresso",
+          "host": ["{{base_url}}"],
+          "path": ["coffee", "espresso"]
+        }
+      }
+    },
+    {
+      "name": "Brew Double Espresso",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/coffee/double-espresso",
+          "host": ["{{base_url}}"],
+          "path": ["coffee", "double-espresso"]
+        }
+      }
+    },
+    {
+      "name": "Brew Americano",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/coffee/americano",
+          "host": ["{{base_url}}"],
+          "path": ["coffee", "americano"]
+        }
+      }
+    },
+    {
+      "name": "Brew Ristretto",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/coffee/ristretto",
+          "host": ["{{base_url}}"],
+          "path": ["coffee", "ristretto"]
+        }
+      }
+    },
+    {
+      "name": "Fill Water",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"amount_ml\": 200\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/containers/water/fill",
+          "host": ["{{base_url}}"],
+          "path": ["containers", "water", "fill"]
+        }
+      }
+    },
+    {
+      "name": "Fill Coffee",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"amount_g\": 50\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/containers/coffee/fill",
+          "host": ["{{base_url}}"],
+          "path": ["containers", "coffee", "fill"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    }
+  ]
+}
