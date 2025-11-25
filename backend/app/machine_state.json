@@ -1,15 +1,15 @@
 {
   "water": {
     "capacity": 2000,
-    "level": 1464,
+    "level": 1810,
     "unit": "ml",
     "name": "water"
   },
   "coffee": {
     "capacity": 500,
-    "level": 452,
+    "level": 484,
     "unit": "g",
     "name": "coffee"
   },
-  "last_message": "Espresso is ready!"
+  "last_message": "Added 250 ml of water."
 }

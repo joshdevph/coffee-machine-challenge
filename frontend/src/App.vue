@@ -30,6 +30,10 @@ const coffeePercent = computed(() => {
 })
 
 const lastMessage = computed(() => machineStatus.value?.last_message || 'No drinks brewed yet.')
+const statusSummary = computed(() => describeStatus(machineStatus.value))
+
+const MIN_WATER_REQUIRED = 148 // enough for an Americano, the most water-heavy recipe
+const MIN_COFFEE_REQUIRED = 16 // enough for a double espresso/Americano, the most coffee-heavy recipe
 
 function createId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -90,6 +94,38 @@ function applyStatus(payload) {
   }
 }
 
+function describeStatus(status) {
+  if (!status) return 'No status available.'
+  const water = status.water
+  const coffee = status.coffee
+
+  if (water.level <= 0 && coffee.level <= 0) {
+    return 'Both water and coffee are empty.'
+  }
+  if (water.level <= 0) {
+    return 'Water container is empty.'
+  }
+  if (coffee.level <= 0) {
+    return 'Coffee container is empty.'
+  }
+  const waterOk = water.level >= MIN_WATER_REQUIRED
+  const coffeeOk = coffee.level >= MIN_COFFEE_REQUIRED
+
+  if (!waterOk && !coffeeOk) {
+    return `Low resources: water ${water.level}/${water.capacity} ml (< ${MIN_WATER_REQUIRED} ml), coffee ${coffee.level}/${coffee.capacity} g (< ${MIN_COFFEE_REQUIRED} g).`
+  }
+  if (!waterOk) {
+    return `Low water: ${water.level}/${water.capacity} ml. At least ${MIN_WATER_REQUIRED} ml is needed for the largest drink.`
+  }
+  if (!coffeeOk) {
+    return `Low coffee: ${coffee.level}/${coffee.capacity} g. At least ${MIN_COFFEE_REQUIRED} g is needed for the largest drink.`
+  }
+  if (water.level === water.capacity && coffee.level === coffee.capacity) {
+    return 'Both containers are full and ready to brew.'
+  }
+  return `Ready to brew. Water: ${water.level}/${water.capacity} ml, Coffee: ${coffee.level}/${coffee.capacity} g.`
+}
+
 async function runAction(actionName, fn) {
   loadingAction.value = actionName
   try {
@@ -117,9 +153,8 @@ async function fetchStatus() {
     const latestMessage = payload.status?.last_message
     if (latestMessage && latestMessage !== previousMessage) {
       pushEvent(latestMessage)
-    } else if (events.value[0]?.message !== 'Status refreshed') {
-      pushEvent('Status refreshed')
     }
+    pushEvent(describeStatus(payload.status))
   })
 }
 
@@ -167,7 +202,7 @@ onMounted(() => {
         <p class="lead">Brew drinks, keep resources topped up, and monitor the machine.</p>
       </div>
       <button class="secondary" :disabled="isBusy" @click="fetchStatus">
-        {{ loadingAction === 'status' ? 'Refreshing…' : 'Check status' }}
+        {{ loadingAction === 'status' ? 'Refreshing...' : 'Check status' }}
       </button>
     </header>
 
@@ -218,6 +253,7 @@ onMounted(() => {
             <p class="eyebrow">Status</p>
             <h2 id="status-title">Resources</h2>
           </div>
+          <p class="muted">{{ statusSummary }}</p>
           <div v-if="machineStatus" class="status-grid">
             <article>
               <h3>Water</h3>
@@ -238,7 +274,7 @@ onMounted(() => {
               </div>
             </article>
           </div>
-          <p v-else class="muted">Fetching machine state…</p>
+          <p v-else class="muted">Fetching machine state...</p>
 
           <div class="message-card">
             <h3>Latest message</h3>
